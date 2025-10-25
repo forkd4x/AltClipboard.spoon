@@ -24,10 +24,10 @@ spoon.AltClipboard:start()
 
 ## Usage
 
-### Copy to Alt Clipboard
+### Copy/Cut to Alt Clipboard
 
 1. Select any content (text, image, file, etc.)
-2. Press `alt+cmd+c`
+2. Press `alt+cmd+c` (to copy) or `alt+cmd+x` (to cut)
 3. The content is copied to the alt clipboard
 4. Your system clipboard remains unchanged
 

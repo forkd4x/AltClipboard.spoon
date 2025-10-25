@@ -61,6 +61,12 @@ function obj:start()
       return self:handleAltPaste(event)
     end
 
+    -- Check for cmd+alt+x (cut to alt clipboard)
+    -- keyCode 7 = 'x'
+    if keyCode == 7 and flags.cmd and flags.alt then
+      return self:handleAltCut(event)
+    end
+
     return false
   end)
 
@@ -117,6 +123,42 @@ function obj:handleAltCopy(event)
   end)
 
   -- Return false to allow the modified event (cmd+c without alt) to propagate
+  return false
+end
+
+--- AltClipboard:handleAltCut(event)
+--- Method
+--- Handles alt+cmd+x to cut to the alternate clipboard
+---
+--- Parameters:
+---  * event - The keyboard event
+---
+--- Returns:
+---  * false to propagate the modified event
+function obj:handleAltCut(event)
+  -- Backup the current system clipboard (all data types)
+  local backup = hs.pasteboard.readAllData()
+
+  -- Get the event flags and remove the alt/option key
+  local flags = event:getFlags()
+  flags.alt = false
+  event:setFlags(flags)
+
+  -- Set a timer to restore the backup after the system processes cmd+x
+  hs.timer.doAfter(0.1, function()
+    -- Store what was just cut into our alt clipboard pasteboard (all data types)
+    local cutContent = hs.pasteboard.readAllData()
+    if cutContent then
+      hs.pasteboard.writeAllData("alt", cutContent)
+    end
+
+    -- Restore the original clipboard contents
+    if backup then
+      hs.pasteboard.writeAllData(backup)
+    end
+  end)
+
+  -- Return false to allow the modified event (cmd+x without alt) to propagate
   return false
 end
 
